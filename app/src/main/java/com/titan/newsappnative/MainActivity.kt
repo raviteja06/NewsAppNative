@@ -3,6 +3,7 @@ package com.titan.newsappnative
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -54,6 +55,8 @@ class MainActivity : AppCompatActivity() {
                 Resource.Status.SUCCESS -> {
                     binding.swipeRefresh.isRefreshing = false
                     result.data?.articles?.let { newsAdapter.updateList(it) }
+                    binding.totalResults.text =
+                        getString(R.string.total_results, result.data?.totalResults)
                     if (!SharedPreference.showedBookmarkToast) {
                         Snackbar.make(
                             binding.main,
@@ -129,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         })
         val bookmarkView = menu.findItem(R.id.bookmarked) as MenuItem
         bookmarkView.setOnMenuItemClickListener {
-            //
+            startActivity(Intent(this@MainActivity, BookmarkActivity::class.java))
             true
         }
         return true

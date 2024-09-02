@@ -8,4 +8,7 @@
     <string name="open_article_in_new_page">Open Article in new page</string>
     <string name="bookmarked">Bookmarked</string>
     <string name="bookmark_toast">Long press on Article to bookmark.\n</string>
+    <string name="bookmark_activity">Bookmarks</string>
+    <string name="total_results">Total Results %1$s</string>
+    <string name="delete_bookmark">Remove from bookmark</string>
 </resources>

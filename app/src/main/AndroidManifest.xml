@@ -35,6 +35,12 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        <activity
+            android:name=".BookmarkActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="false"
+            android:label="@string/bookmark_activity"
+            android:theme="@style/Theme.AppCompat.DayNight" />
     </application>
 
 </manifest>

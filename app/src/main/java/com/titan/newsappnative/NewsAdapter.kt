@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.titan.newsappnative.databinding.ItemNewsBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -38,6 +41,16 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         binding.author.text = item.author
 
         binding.main.setOnLongClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                AppDatabase.instance.bookmarks().insert(
+                    Bookmarks(
+                        item.author,
+                        item.title,
+                        item.url
+                    )
+                )
+
+            }
             return@setOnLongClickListener true
         }
         binding.openArticle.setOnClickListener {
