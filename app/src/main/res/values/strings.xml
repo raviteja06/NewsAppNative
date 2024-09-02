@@ -7,4 +7,5 @@
     <string name="try_again">Try Again</string>
     <string name="open_article_in_new_page">Open Article in new page</string>
     <string name="bookmarked">Bookmarked</string>
+    <string name="bookmark_toast">Long press on Article to bookmark.\n</string>
 </resources>

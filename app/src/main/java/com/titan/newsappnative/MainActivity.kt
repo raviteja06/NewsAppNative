@@ -54,6 +54,14 @@ class MainActivity : AppCompatActivity() {
                 Resource.Status.SUCCESS -> {
                     binding.swipeRefresh.isRefreshing = false
                     result.data?.articles?.let { newsAdapter.updateList(it) }
+                    if (!SharedPreference.showedBookmarkToast) {
+                        Snackbar.make(
+                            binding.main,
+                            getString(R.string.bookmark_toast),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        SharedPreference.showedBookmarkToast = true
+                    }
                 }
 
                 Resource.Status.ERROR -> {
