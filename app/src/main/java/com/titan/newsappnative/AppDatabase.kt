@@ -9,17 +9,6 @@ import androidx.room.RoomDatabase
     version = 1,
     exportSchema = false
 )
-
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bookmarks(): BookmarksDao
-
-    companion object {
-        val instance: AppDatabase by lazy {
-            Room.databaseBuilder(
-                NewsApp.application,
-                AppDatabase::class.java,
-                NewsApp.application.packageName
-            ).build()
-        }
-    }
 }

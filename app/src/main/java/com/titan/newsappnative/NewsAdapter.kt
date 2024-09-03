@@ -11,9 +11,9 @@ import com.titan.newsappnative.databinding.ItemNewsBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NewsAdapter @Inject constructor(private val bookmark: BookmarksDao) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val newsList = ArrayList<Article>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -42,7 +42,7 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         binding.main.setOnLongClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                AppDatabase.instance.bookmarks().insert(
+                bookmark.insert(
                     Bookmarks(
                         item.author,
                         item.title,

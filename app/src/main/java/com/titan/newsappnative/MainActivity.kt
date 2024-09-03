@@ -14,14 +14,16 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.snackbar.Snackbar
 import com.titan.newsappnative.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val apiModel: NewsAPI by viewModels()
     private lateinit var binding: ActivityMainBinding
-    private val newsAdapter by lazy {
-        NewsAdapter()
-    }
-    private var searchQuery: String? = null
+    @Inject
+    lateinit var newsAdapter: NewsAdapter
+    var searchQuery: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

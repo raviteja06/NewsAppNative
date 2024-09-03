@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:maxLines="3"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/delete_bookmark"
+        app:layout_constraintEnd_toStartOf="@+id/open_article"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="News Title" />
@@ -40,5 +40,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/open_article"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/open_article_in_new_page"
+        android:padding="4dp"
+        android:src="@drawable/ic_open"
+        app:layout_constraintBottom_toBottomOf="@+id/delete_bookmark"
+        app:layout_constraintEnd_toStartOf="@+id/delete_bookmark"
+        app:layout_constraintTop_toTopOf="@+id/delete_bookmark"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
