@@ -2,6 +2,7 @@ package com.titan.newsappnative.feature_news.presentation.activity
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -12,6 +13,7 @@ import com.titan.newsappnative.R
 import com.titan.newsappnative.databinding.ActivityBookmarkBinding
 import com.titan.newsappnative.di.BookmarkManager
 import com.titan.newsappnative.feature_news.presentation.adapter.BookmarkAdapter
+import com.titan.newsappnative.feature_news.presentation.viewmodel.BookmarkViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,9 +24,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BookmarkActivity : AppCompatActivity(), BookmarkManager.RemoveBookmarkListener {
     private lateinit var binding: ActivityBookmarkBinding
-
-    @Inject
-    lateinit var bookmark: BookmarkDao
+    private val viewModel: BookmarkViewModel by viewModels()
 
     @Inject
     lateinit var bookmarkAdapter: BookmarkAdapter
@@ -37,7 +37,11 @@ class BookmarkActivity : AppCompatActivity(), BookmarkManager.RemoveBookmarkList
         binding = ActivityBookmarkBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUp()
-        getData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getBookmarks()
     }
 
     private fun setUp() {
@@ -46,22 +50,18 @@ class BookmarkActivity : AppCompatActivity(), BookmarkManager.RemoveBookmarkList
         ContextCompat.getDrawable(baseContext, R.drawable.line_divider)
             ?.let { divider.setDrawable(it) }
         binding.recyclerView.addItemDecoration(divider)
-    }
-
-    private fun getData() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val bookmarks = bookmark.get()
-            withContext(Dispatchers.Main) {
-                binding.recyclerView.adapter = bookmarkAdapter
-                bookmarkAdapter.update(bookmarks)
-            }
+        viewModel.bookmarksDataStream.observe(this) { result ->
+            binding.recyclerView.adapter = bookmarkAdapter
+            bookmarkAdapter.update(result)
         }
     }
 
     override fun onRemoved(position: Int, bookmark: Bookmark) {
+        viewModel.deleteBookmark(bookmark)
         Snackbar.make(
             this.binding.main, getString(R.string.article_bookmarked_removed), Toast.LENGTH_SHORT
         ).setAction(getString(R.string.undo)) {
+            viewModel.bookmarkArticle(bookmark)
             bookmarkAdapter.add(position, bookmark)
         }.show()
     }

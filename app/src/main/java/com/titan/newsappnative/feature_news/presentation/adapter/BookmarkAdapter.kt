@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class BookmarkAdapter  @Inject constructor(private val bookmarksDao: BookmarkDao) :
+class BookmarkAdapter @Inject constructor() :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     @Inject
     lateinit var bookmarkListener: BookmarkManager.RemoveBookmarkListener
@@ -40,9 +40,6 @@ class BookmarkAdapter  @Inject constructor(private val bookmarksDao: BookmarkDao
         binding.author.text = item.author
 
         binding.deleteBookmark.setOnClickListener() {
-            CoroutineScope(Dispatchers.IO).launch {
-                bookmarksDao.delete(item)
-            }
             bookmarksList.removeAt(position)
             bookmarkListener.onRemoved(position, item)
             notifyItemRemoved(position)
@@ -61,12 +58,7 @@ class BookmarkAdapter  @Inject constructor(private val bookmarksDao: BookmarkDao
     }
 
     fun add(position: Int, bookmark: Bookmark) {
-        CoroutineScope(Dispatchers.IO).launch {
-            bookmarksDao.insert(bookmark)
-            bookmarksList.add(position, bookmark)
-            CoroutineScope(Dispatchers.Main).launch {
-                notifyItemInserted(position)
-            }
-        }
+        bookmarksList.add(position, bookmark)
+        notifyItemInserted(position)
     }
 }

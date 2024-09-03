@@ -5,4 +5,5 @@
     <color name="search_icon">#000000</color>
     <color name="bookmark_icon">#000000</color>
     <color name="open_icon">#000000</color>
+    <color name="delete_icon">#000000</color>
 </resources>

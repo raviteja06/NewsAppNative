@@ -3,4 +3,5 @@
     <color name="search_icon">#FFFFFF</color>
     <color name="open_icon">#FFFFFF</color>
     <color name="bookmark_icon">#FFFFFF</color>
+    <color name="delete_icon">#FFFFFF</color>
 </resources>

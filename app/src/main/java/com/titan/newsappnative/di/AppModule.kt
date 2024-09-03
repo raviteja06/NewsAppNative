@@ -5,13 +5,11 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.room.Room
 import com.google.gson.Gson
-import com.titan.newsappnative.feature_news.data.data_source.BookmarkDatabase
 import com.titan.newsappnative.feature_news.data.data_source.BookmarkDao
-import com.titan.newsappnative.feature_news.domain.util.NetworkUtil
-import com.titan.newsappnative.feature_news.data.remote.NewsApi
+import com.titan.newsappnative.feature_news.data.data_source.BookmarkDatabase
 import com.titan.newsappnative.feature_news.data.data_source.SharedPreference
-import com.titan.newsappnative.feature_news.data.repository.NewsRepositoryImpl
-import com.titan.newsappnative.feature_news.domain.repository.NewsRepository
+import com.titan.newsappnative.feature_news.data.remote.NewsApi
+import com.titan.newsappnative.feature_news.domain.util.NetworkUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +21,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
