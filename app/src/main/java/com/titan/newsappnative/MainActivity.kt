@@ -5,11 +5,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -40,14 +40,27 @@ class MainActivity : AppCompatActivity(), BookmarkManager.BookmarkListener {
     @Inject
     lateinit var bookmarksDao: BookmarksDao
 
+    @Inject
+    lateinit var networkUtil: NetworkUtil
+
     var searchQuery: String? = null
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUp()
-        getHeadlines()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        dialog?.dismiss()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        callApi()
     }
 
     private fun setUp() {
@@ -58,6 +71,12 @@ class MainActivity : AppCompatActivity(), BookmarkManager.BookmarkListener {
         binding.recyclerView.addItemDecoration(divider)
         binding.recyclerView.adapter = newsAdapter
         binding.swipeRefresh.setOnRefreshListener {
+            callApi()
+        }
+    }
+
+    private fun callApi() {
+        if (networkUtil.isOnline) {
             searchQuery?.let {
                 if (it.isNotEmpty()) {
                     getSearchResults(it)
@@ -65,6 +84,19 @@ class MainActivity : AppCompatActivity(), BookmarkManager.BookmarkListener {
                     getHeadlines()
                 }
             } ?: getHeadlines()
+        } else {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder
+                .setMessage(getString(R.string.unable_to_connect_to_internet_to_fetch_news))
+                .setTitle(getString(R.string.network_error))
+                .setPositiveButton(
+                    getString(R.string.ok)
+                ) { _, _ ->
+                    finish()
+                }
+
+            dialog = builder.create()
+            dialog?.show()
         }
     }
 

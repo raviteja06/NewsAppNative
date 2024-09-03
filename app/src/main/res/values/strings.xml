@@ -9,8 +9,11 @@
     <string name="bookmarked">Bookmarked</string>
     <string name="bookmark_toast">Long press on Article to bookmark.\n</string>
     <string name="bookmark_activity">Bookmarks</string>
-    <string name="total_results" formatted="false">Total Results %1$s</string>
+    <string name="total_results" formatted="false">Total Results %d</string>
     <string name="delete_bookmark">Remove from bookmark</string>
     <string name="article_bookmarked">Article Bookmarked</string>
     <string name="undo">Undo</string>
+    <string name="ok">OK</string>
+    <string name="network_error">Network Error</string>
+    <string name="unable_to_connect_to_internet_to_fetch_news">Unable to connect to internet to fetch news.</string>
 </resources>

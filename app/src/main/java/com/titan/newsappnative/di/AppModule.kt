@@ -2,11 +2,14 @@ package com.titan.newsappnative.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import androidx.room.Room
 import com.google.gson.Gson
 import com.titan.newsappnative.AppDatabase
 import com.titan.newsappnative.BookmarksDao
+import com.titan.newsappnative.NetworkUtil
 import com.titan.newsappnative.NewsApiService
 import com.titan.newsappnative.NewsApp
 import com.titan.newsappnative.SharedPreference
@@ -84,5 +87,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun sharedPreference(sharedPreference: SharedPreferences): SharedPreference = SharedPreference(sharedPreference)
+    fun sharedPreference(sharedPreference: SharedPreferences): SharedPreference =
+        SharedPreference(sharedPreference)
+
+    @Provides
+    fun networkUtil(@ApplicationContext context: Context): NetworkUtil = NetworkUtil(context)
 }

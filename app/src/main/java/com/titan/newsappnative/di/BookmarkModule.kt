@@ -16,13 +16,7 @@ object BookmarkModule{
     fun provideCallback(activity: Activity) = activity as BookmarkManager.BookmarkListener
 }
 
-class BookmarkManager @Inject constructor(
-    private val listener: BookmarkListener
-) {
-
-    fun activateCallback(bookmark: Bookmarks){
-        listener.onBookmarked(bookmark)
-    }
+class BookmarkManager @Inject constructor() {
 
     interface BookmarkListener {
         fun onBookmarked(bookmark: Bookmarks)
