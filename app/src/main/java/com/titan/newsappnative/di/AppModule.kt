@@ -1,6 +1,7 @@
 package com.titan.newsappnative.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.room.Room
 import com.google.gson.Gson
@@ -8,6 +9,7 @@ import com.titan.newsappnative.AppDatabase
 import com.titan.newsappnative.BookmarksDao
 import com.titan.newsappnative.NewsApiService
 import com.titan.newsappnative.NewsApp
+import com.titan.newsappnative.SharedPreference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -75,4 +77,12 @@ object AppModule {
     fun bookmarks(database: AppDatabase): BookmarksDao =
         database.bookmarks()
 
+    @Provides
+    @Singleton
+    fun initSharedPreference(@ApplicationContext context: Context): SharedPreferences =
+        context.getSharedPreferences("news", Context.MODE_PRIVATE)
+
+    @Provides
+    @Singleton
+    fun sharedPreference(sharedPreference: SharedPreferences): SharedPreference = SharedPreference(sharedPreference)
 }

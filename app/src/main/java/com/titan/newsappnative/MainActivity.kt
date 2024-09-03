@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     @Inject
     lateinit var newsAdapter: NewsAdapter
+    @Inject
+    lateinit var preference: SharedPreference
     var searchQuery: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,13 +61,13 @@ class MainActivity : AppCompatActivity() {
                     result.data?.articles?.let { newsAdapter.updateList(it) }
                     binding.totalResults.text =
                         getString(R.string.total_results, result.data?.totalResults)
-                    if (!SharedPreference.showedBookmarkToast) {
+                    if (!preference.showedBookmarkToast) {
                         Snackbar.make(
                             binding.main,
                             getString(R.string.bookmark_toast),
                             Snackbar.LENGTH_LONG
                         ).show()
-                        SharedPreference.showedBookmarkToast = true
+                        preference.showedBookmarkToast = true
                     }
                 }
 
