@@ -1,5 +1,6 @@
 package com.titan.newsappnative
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
@@ -46,6 +47,7 @@ class BookmarkAdapter  @Inject constructor(private val bookmark: BookmarksDao) :
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun update(bookmarks: List<Bookmarks>) {
         bookmarksList.clear()
         bookmarks.forEach { bookmarksList.add(it) }

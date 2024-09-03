@@ -11,15 +11,9 @@ interface BookmarksDao {
     @Query("SELECT * FROM Bookmarks")
     suspend fun get(): List<Bookmarks>
 
-    @Query("SELECT * FROM Bookmarks WHERE url= :url")
-    suspend fun getUrl(url: String): Bookmarks?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(bookmark: Bookmarks)
 
     @Delete
     suspend fun delete(bookmark: Bookmarks)
-
-    @Query("DELETE FROM Bookmarks")
-    suspend fun clear()
 }

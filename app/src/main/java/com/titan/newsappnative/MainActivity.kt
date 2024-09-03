@@ -5,8 +5,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -14,17 +16,30 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.snackbar.Snackbar
 import com.titan.newsappnative.databinding.ActivityMainBinding
+import com.titan.newsappnative.di.BookmarkManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-    private val apiModel: NewsAPI by viewModels()
+class MainActivity : AppCompatActivity(), BookmarkManager.BookmarkListener {
     private lateinit var binding: ActivityMainBinding
+    private val apiModel: NewsAPI by viewModels()
+
+    @Inject
+    lateinit var bookmarkManager: BookmarkManager
+
     @Inject
     lateinit var newsAdapter: NewsAdapter
+
     @Inject
     lateinit var preference: SharedPreference
+
+    @Inject
+    lateinit var bookmarksDao: BookmarksDao
+
     var searchQuery: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,6 +155,16 @@ class MainActivity : AppCompatActivity() {
             true
         }
         return true
+    }
+
+    override fun onBookmarked(bookmark: Bookmarks) {
+        Snackbar.make(
+            this.binding.main, getString(R.string.article_bookmarked), Toast.LENGTH_SHORT
+        ).setAction(getString(R.string.undo)) {
+            CoroutineScope(Dispatchers.IO).launch {
+                bookmarksDao.delete(bookmark)
+            }
+        }.show()
     }
 
 }

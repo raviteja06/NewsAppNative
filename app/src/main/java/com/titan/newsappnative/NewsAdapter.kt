@@ -8,12 +8,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.titan.newsappnative.databinding.ItemNewsBinding
+import com.titan.newsappnative.di.BookmarkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class NewsAdapter @Inject constructor(private val bookmark: BookmarksDao) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NewsAdapter @Inject constructor(
+    private val bookmarksDao: BookmarksDao
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    @Inject
+    lateinit var bookmarkListener: BookmarkManager.BookmarkListener
     private val newsList = ArrayList<Article>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -42,14 +47,13 @@ class NewsAdapter @Inject constructor(private val bookmark: BookmarksDao) : Recy
 
         binding.main.setOnLongClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                bookmark.insert(
-                    Bookmarks(
-                        item.author,
-                        item.title,
-                        item.url
-                    )
+                val bookmark = Bookmarks(
+                    item.author,
+                    item.title,
+                    item.url
                 )
-
+                bookmarksDao.insert(bookmark)
+                bookmarkListener.onBookmarked(bookmark)
             }
             return@setOnLongClickListener true
         }
