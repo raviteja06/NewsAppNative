@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NewsAppNative">
         <activity
-            android:name=".SplashActivity"
+            android:name=".feature_news.presentation.activity.SplashActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true"
             android:theme="@style/SplashScreenTheme">
@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".feature_news.presentation.activity.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
             android:label="@string/main_activity_search_results"
@@ -37,7 +37,7 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".BookmarkActivity"
+            android:name=".feature_news.presentation.activity.BookmarkActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
             android:label="@string/bookmark_activity"

@@ -1,7 +1,7 @@
 package com.titan.newsappnative.di
 
 import android.app.Activity
-import com.titan.newsappnative.Bookmarks
+import com.titan.newsappnative.feature_news.domain.model.Bookmark
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,12 +13,19 @@ import javax.inject.Inject
 object BookmarkModule{
 
     @Provides
-    fun provideCallback(activity: Activity) = activity as BookmarkManager.BookmarkListener
+    fun provideBookmarkedCallback(activity: Activity) = activity as BookmarkManager.BookmarkListener
+
+    @Provides
+    fun provideRemoveBookmarkCallback(activity: Activity) = activity as BookmarkManager.RemoveBookmarkListener
 }
 
 class BookmarkManager @Inject constructor() {
 
     interface BookmarkListener {
-        fun onBookmarked(bookmark: Bookmarks)
+        fun onBookmarked(bookmark: Bookmark)
+    }
+
+    interface RemoveBookmarkListener {
+        fun onRemoved(position: Int, bookmark: Bookmark)
     }
 }

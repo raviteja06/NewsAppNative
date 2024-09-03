@@ -1,4 +1,4 @@
-package com.titan.newsappnative
+package com.titan.newsappnative.feature_news.domain.model
 
 data class News(
     val status: String,

@@ -1,4 +1,4 @@
-package com.titan.newsappnative
+package com.titan.newsappnative.feature_news.presentation.activity
 
 import android.app.SearchManager
 import android.content.ComponentName
@@ -15,30 +15,28 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.snackbar.Snackbar
+import com.titan.newsappnative.R
+import com.titan.newsappnative.base.Resource
 import com.titan.newsappnative.databinding.ActivityMainBinding
 import com.titan.newsappnative.di.BookmarkManager
+import com.titan.newsappnative.feature_news.domain.model.Bookmark
+import com.titan.newsappnative.feature_news.domain.model.News
+import com.titan.newsappnative.feature_news.domain.util.NetworkUtil
+import com.titan.newsappnative.feature_news.presentation.adapter.NewsAdapter
+import com.titan.newsappnative.feature_news.presentation.viewmodel.NewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), BookmarkManager.BookmarkListener {
     private lateinit var binding: ActivityMainBinding
-    private val apiModel: NewsAPI by viewModels()
+    private val viewModel: NewsViewModel by viewModels()
 
     @Inject
     lateinit var bookmarkManager: BookmarkManager
 
     @Inject
     lateinit var newsAdapter: NewsAdapter
-
-    @Inject
-    lateinit var preference: SharedPreference
-
-    @Inject
-    lateinit var bookmarksDao: BookmarksDao
 
     @Inject
     lateinit var networkUtil: NetworkUtil
@@ -73,17 +71,57 @@ class MainActivity : AppCompatActivity(), BookmarkManager.BookmarkListener {
         binding.swipeRefresh.setOnRefreshListener {
             callApi()
         }
+        viewModel.searchResultsDataStream.observe(this) { result ->
+            processResult(result)
+        }
+        viewModel.highlightsDataStream.observe(this) { result ->
+            processResult(result)
+        }
+    }
+
+    private fun processResult(result: Resource<News?>) {
+        when (result) {
+            is Resource.Loading -> {
+                binding.swipeRefresh.isRefreshing = true
+            }
+
+            is Resource.Success -> {
+                binding.swipeRefresh.isRefreshing = false
+                result.data?.articles?.let { newsAdapter.updateList(it) }
+                binding.totalResults.text =
+                    getString(R.string.total_results, result.data?.totalResults)
+                if (!viewModel.isBookmarkSnackbarShown()) {
+                    Snackbar.make(
+                        binding.main,
+                        getString(R.string.bookmark_toast),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    viewModel.setBookmarkSnackbarShown()
+                }
+            }
+
+            is Resource.Error -> {
+                binding.swipeRefresh.isRefreshing = false
+                Snackbar.make(
+                    binding.main,
+                    result.message ?: getString(R.string.something_went_wrong),
+                    Snackbar.LENGTH_LONG
+                ).setAction(getString(R.string.try_again)) {
+                    callApi()
+                }.show()
+            }
+        }
     }
 
     private fun callApi() {
         if (networkUtil.isOnline) {
             searchQuery?.let {
                 if (it.isNotEmpty()) {
-                    getSearchResults(it)
+                    viewModel.getSearchResults(it)
                 } else {
-                    getHeadlines()
+                    viewModel.getHeadlines()
                 }
-            } ?: getHeadlines()
+            } ?: viewModel.getHeadlines()
         } else {
             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
             builder
@@ -100,68 +138,6 @@ class MainActivity : AppCompatActivity(), BookmarkManager.BookmarkListener {
         }
     }
 
-    private fun getHeadlines() {
-        apiModel.getHeadlines().observe(this) { result ->
-            when (result.status) {
-                Resource.Status.SUCCESS -> {
-                    binding.swipeRefresh.isRefreshing = false
-                    result.data?.articles?.let { newsAdapter.updateList(it) }
-                    binding.totalResults.text =
-                        getString(R.string.total_results, result.data?.totalResults)
-                    if (!preference.showedBookmarkToast) {
-                        Snackbar.make(
-                            binding.main,
-                            getString(R.string.bookmark_toast),
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                        preference.showedBookmarkToast = true
-                    }
-                }
-
-                Resource.Status.ERROR -> {
-                    binding.swipeRefresh.isRefreshing = false
-                    Snackbar.make(
-                        binding.main,
-                        result.error ?: getString(R.string.something_went_wrong),
-                        Snackbar.LENGTH_LONG
-                    ).setAction(getString(R.string.try_again)) {
-                        getHeadlines()
-                    }.show()
-                }
-
-                Resource.Status.LOADING -> {
-                    binding.swipeRefresh.isRefreshing = true
-                }
-            }
-        }
-    }
-
-    private fun getSearchResults(query: String) {
-        apiModel.getSearchResults(query).observe(this) { result ->
-            when (result.status) {
-                Resource.Status.SUCCESS -> {
-                    binding.swipeRefresh.isRefreshing = false
-                    result.data?.articles?.let { newsAdapter.updateList(it) }
-                }
-
-                Resource.Status.ERROR -> {
-                    binding.swipeRefresh.isRefreshing = false
-                    Snackbar.make(
-                        binding.main,
-                        result.error ?: getString(R.string.something_went_wrong),
-                        Snackbar.LENGTH_LONG
-                    ).setAction(getString(R.string.try_again)) {
-                        getHeadlines()
-                    }.show()
-                }
-
-                Resource.Status.LOADING -> {
-                    binding.swipeRefresh.isRefreshing = true
-                }
-            }
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
@@ -172,7 +148,7 @@ class MainActivity : AppCompatActivity(), BookmarkManager.BookmarkListener {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 searchQuery = query
-                getSearchResults(query)
+                callApi()
                 return true
             }
 
@@ -189,13 +165,12 @@ class MainActivity : AppCompatActivity(), BookmarkManager.BookmarkListener {
         return true
     }
 
-    override fun onBookmarked(bookmark: Bookmarks) {
+    override fun onBookmarked(bookmark: Bookmark) {
+        viewModel.bookmarkArticle(bookmark)
         Snackbar.make(
             this.binding.main, getString(R.string.article_bookmarked), Toast.LENGTH_SHORT
         ).setAction(getString(R.string.undo)) {
-            CoroutineScope(Dispatchers.IO).launch {
-                bookmarksDao.delete(bookmark)
-            }
+            viewModel.deleteBookmark(bookmark)
         }.show()
     }
 

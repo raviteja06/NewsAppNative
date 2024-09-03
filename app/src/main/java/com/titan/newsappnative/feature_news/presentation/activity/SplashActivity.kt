@@ -1,4 +1,4 @@
-package com.titan.newsappnative
+package com.titan.newsappnative.feature_news.presentation.activity
 
 import android.content.Intent
 import android.os.Bundle

@@ -1,4 +1,4 @@
-package com.titan.newsappnative
+package com.titan.newsappnative.feature_news.presentation.adapter
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -6,16 +6,21 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.titan.newsappnative.feature_news.domain.model.Bookmark
+import com.titan.newsappnative.feature_news.data.data_source.BookmarkDao
 import com.titan.newsappnative.databinding.ItemBookmarkBinding
+import com.titan.newsappnative.di.BookmarkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class BookmarkAdapter  @Inject constructor(private val bookmark: BookmarksDao) :
+class BookmarkAdapter  @Inject constructor(private val bookmarksDao: BookmarkDao) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val bookmarksList: ArrayList<Bookmarks> = arrayListOf()
+    @Inject
+    lateinit var bookmarkListener: BookmarkManager.RemoveBookmarkListener
+    private val bookmarksList: ArrayList<Bookmark> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val viewDataBinding =
@@ -36,9 +41,10 @@ class BookmarkAdapter  @Inject constructor(private val bookmark: BookmarksDao) :
 
         binding.deleteBookmark.setOnClickListener() {
             CoroutineScope(Dispatchers.IO).launch {
-                bookmark.delete(item)
+                bookmarksDao.delete(item)
             }
             bookmarksList.removeAt(position)
+            bookmarkListener.onRemoved(position, item)
             notifyItemRemoved(position)
         }
         binding.openArticle.setOnClickListener {
@@ -48,9 +54,19 @@ class BookmarkAdapter  @Inject constructor(private val bookmark: BookmarksDao) :
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun update(bookmarks: List<Bookmarks>) {
+    fun update(bookmarks: List<Bookmark>) {
         bookmarksList.clear()
         bookmarks.forEach { bookmarksList.add(it) }
         notifyDataSetChanged()
+    }
+
+    fun add(position: Int, bookmark: Bookmark) {
+        CoroutineScope(Dispatchers.IO).launch {
+            bookmarksDao.insert(bookmark)
+            bookmarksList.add(position, bookmark)
+            CoroutineScope(Dispatchers.Main).launch {
+                notifyItemInserted(position)
+            }
+        }
     }
 }

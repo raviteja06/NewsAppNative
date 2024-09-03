@@ -1,6 +1,5 @@
-package com.titan.newsappnative
+package com.titan.newsappnative.feature_news.data.data_source
 
-import android.content.Context
 import android.content.SharedPreferences
 import javax.inject.Inject
 

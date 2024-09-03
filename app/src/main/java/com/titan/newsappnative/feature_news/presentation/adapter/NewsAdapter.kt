@@ -1,4 +1,4 @@
-package com.titan.newsappnative
+package com.titan.newsappnative.feature_news.presentation.adapter
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,14 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.titan.newsappnative.databinding.ItemNewsBinding
 import com.titan.newsappnative.di.BookmarkManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.titan.newsappnative.feature_news.domain.model.Article
+import com.titan.newsappnative.feature_news.domain.model.Bookmark
 import javax.inject.Inject
 
-class NewsAdapter @Inject constructor(
-    private val bookmarksDao: BookmarksDao
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NewsAdapter @Inject constructor() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     @Inject
     lateinit var bookmarkListener: BookmarkManager.BookmarkListener
     private val newsList = ArrayList<Article>()
@@ -46,15 +43,12 @@ class NewsAdapter @Inject constructor(
         binding.author.text = item.author
 
         binding.main.setOnLongClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                val bookmark = Bookmarks(
-                    item.author,
-                    item.title,
-                    item.url
-                )
-                bookmarksDao.insert(bookmark)
-                bookmarkListener.onBookmarked(bookmark)
-            }
+            val bookmark = Bookmark(
+                item.author,
+                item.title,
+                item.url
+            )
+            bookmarkListener.onBookmarked(bookmark)
             return@setOnLongClickListener true
         }
         binding.openArticle.setOnClickListener {

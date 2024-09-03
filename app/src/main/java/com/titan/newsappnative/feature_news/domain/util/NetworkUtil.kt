@@ -1,9 +1,8 @@
-package com.titan.newsappnative
+package com.titan.newsappnative.feature_news.domain.util
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

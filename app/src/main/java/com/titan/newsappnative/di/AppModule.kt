@@ -2,17 +2,16 @@ package com.titan.newsappnative.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.util.Log
 import androidx.room.Room
 import com.google.gson.Gson
-import com.titan.newsappnative.AppDatabase
-import com.titan.newsappnative.BookmarksDao
-import com.titan.newsappnative.NetworkUtil
-import com.titan.newsappnative.NewsApiService
-import com.titan.newsappnative.NewsApp
-import com.titan.newsappnative.SharedPreference
+import com.titan.newsappnative.feature_news.data.data_source.BookmarkDatabase
+import com.titan.newsappnative.feature_news.data.data_source.BookmarkDao
+import com.titan.newsappnative.feature_news.domain.util.NetworkUtil
+import com.titan.newsappnative.feature_news.data.remote.NewsApi
+import com.titan.newsappnative.feature_news.data.data_source.SharedPreference
+import com.titan.newsappnative.feature_news.data.repository.NewsRepositoryImpl
+import com.titan.newsappnative.feature_news.domain.repository.NewsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,6 +23,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -64,21 +64,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): NewsApiService =
-        retrofit.create(NewsApiService::class.java)
+    fun provideApiService(retrofit: Retrofit): NewsApi =
+        retrofit.create(NewsApi::class.java)
 
     @Provides
-    fun database(@ApplicationContext context: Context): AppDatabase =
+    @Singleton
+    fun database(@ApplicationContext context: Context): BookmarkDatabase =
         Room.databaseBuilder(
             context,
-            AppDatabase::class.java,
+            BookmarkDatabase::class.java,
             context.packageName
         ).build()
 
     @Provides
     @Singleton
-    fun bookmarks(database: AppDatabase): BookmarksDao =
-        database.bookmarks()
+    fun bookmarks(database: BookmarkDatabase): BookmarkDao =
+        database.bookmarkDao()
 
     @Provides
     @Singleton

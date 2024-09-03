@@ -1,11 +1,12 @@
-package com.titan.newsappnative
+package com.titan.newsappnative.feature_news.data.remote
 
+import com.titan.newsappnative.feature_news.domain.model.News
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 
-interface NewsApiService {
+interface NewsApi {
     @GET("top-headlines")
     fun getHeadlines(
         @Query("country") country: String = "in",
