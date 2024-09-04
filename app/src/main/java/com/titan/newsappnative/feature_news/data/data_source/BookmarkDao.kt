@@ -12,6 +12,9 @@ interface BookmarkDao {
     @Query("SELECT * FROM Bookmark")
     suspend fun get(): List<Bookmark>
 
+    @Query("SELECT * FROM Bookmark WHERE url=:url limit 1")
+    suspend fun get(url: String): Bookmark?
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(bookmark: Bookmark)
 
