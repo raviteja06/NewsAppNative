@@ -71,20 +71,8 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.2")
     androidTestImplementation("com.google.truth:truth:1.1")
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
-    testImplementation(libs.androidx.espresso.core)
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
-    testImplementation("com.google.dagger:hilt-android-testing:2.51.1")
-    kaptTest("com.google.dagger:hilt-android-compiler:2.51.1")
     testImplementation(libs.junit)
-    testImplementation("androidx.arch.core:core-testing:2.1.0")
-    testImplementation("androidx.test.ext:junit:1.1.2")
-    testImplementation("com.google.truth:truth:1.1")
-    testImplementation("org.mockito:mockito-core:3.11.2")
-    testImplementation("org.mockito:mockito-android:3.11.2")
-    testImplementation("org.robolectric:robolectric:4.5.1")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1")
-
-    implementation("com.squareup.retrofit2:converter-moshi:2.4.0")
+    testImplementation(libs.androidx.espresso.core)
 }
 
 kapt {

@@ -2,14 +2,9 @@ package com.titan.newsappnative
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.collect.Maps
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
-import com.google.gson.reflect.TypeToken
 import com.titan.newsappnative.feature_news.data.remote.NewsApi
 import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -21,11 +16,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.reflect.Type
 
 
 @RunWith(AndroidJUnit4::class)
-class GetHighlightsAPITest {
+class NewsApiTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -38,21 +32,21 @@ class GetHighlightsAPITest {
 
     @Before
     fun init() {
-        val BASE_URL = "https://newsapi.org/v2/"
         server.start(8000)
+        val baseUrl = server.url("/").toString()
         val okHttpClient = OkHttpClient
             .Builder()
             .build()
         apiService = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .client(okHttpClient)
             .build().create(NewsApi::class.java)
     }
 
     @Test
-    fun testApiSuccess() {
-        mockedResponse = MockResponseFileReader("headlines/success.json").content
+    fun testHeadlinesAPI() {
+        val mockedResponse = MockResponseFileReader("headlines/success.json").content
         server.enqueue(
             MockResponse()
                 .setResponseCode(200)
@@ -60,6 +54,22 @@ class GetHighlightsAPITest {
         )
         val response = runBlocking { apiService.getHeadlines().execute() }
         assertNotNull(response)
+        assertNotNull(response.body()?.status)
+        assertNotNull(response.body()?.articles)
+    }
+
+    @Test
+    fun testSearchResultsAPI() {
+        val mockedResponse = MockResponseFileReader("search_results/success.json").content
+        server.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(mockedResponse)
+        )
+        val response = runBlocking { apiService.getSearchResults("Bitcoin").execute() }
+        assertNotNull(response)
+        assertNotNull(response.body()?.status)
+        assertNotNull(response.body()?.articles)
     }
 
     @After
