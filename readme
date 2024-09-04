@@ -1,0 +1,32 @@
+# News App Native
+
+This is a native Android news application.
+
+## Implementation Choices
+
+* **Architecture:** The app follows a Model-View-ViewModel (MVVM) architecture for a clear separation of concerns.
+* **Dependency Injection:** Hilt is used for dependency injection to improve code testability and maintainability.
+* **Networking:**Retrofit is used for making API calls to fetch news data.
+* **Data Persistence:** Room is used for local storage of data, such as bookmarks.
+* **Asynchronous Operations:** Kotlin Coroutines are used for handling asynchronous tasks like network requests and database operations.
+* **State Management:**  LiveData is used for managing UI state and observing data changes.
+* **Testing:**
+    * Unit tests are written for DB and APIs.
+
+## Code Structure
+
+* **`ui`:** Contains Activities, Adapters, View Models and UI-related logic.
+* **`data`:** Contains data sources (remote and local), repositories, and data models.
+* **`domain`:** Contains use cases, business logic, and interactors.
+* **`di`:** Contains dependency injection modules.
+
+## Libraries Used
+
+* Hilt
+* Retrofit
+* Room
+* Kotlin Coroutines
+* LiveData
+* JUnit
+* Mockito
+* Espresso
